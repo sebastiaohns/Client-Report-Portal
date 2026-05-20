@@ -1,118 +1,122 @@
 # FinPlan — Frontend
 
-Interface de gerenciamento de clientes para planejamento financeiro.  
-Vanilla HTML + CSS + JS — zero dependências, roda direto no browser.
+Client management interface for financial planning.
+Vanilla HTML + CSS + JS — zero dependencies, runs directly in the browser.
 
 ## Stack
 
-- **HTML5** semântico
-- **CSS3** com design system via variáveis (dark theme, tipografia editorial)
-- **JavaScript** ES2020+, modular via IIFE, sem frameworks
-- **localStorage** para persistência local (modo offline)
-- **`js/api.js`** pronto para conectar ao backend FastAPI quando disponível
+* **Semantic HTML5**
+* **CSS3** with a design system powered by variables (dark theme, editorial typography)
+* **JavaScript** ES2020+, modular via IIFE, no frameworks
+* **localStorage** for local persistence (offline mode)
+* **`js/api.js`** ready to connect to the FastAPI backend when available
 
 ---
 
-## Estrutura
+## Structure
 
-```
+```text id="1g1x8x"
 financial-frontend/
-├── index.html          # SPA única — todas as views
-├── config.js           # Config runtime (URL do backend)
+├── index.html          # Single SPA — all views
+├── config.js           # Runtime config (backend URL)
 ├── css/
-│   └── main.css        # Design system completo
+│   └── main.css        # Complete design system
 ├── js/
-│   ├── storage.js      # CRUD no localStorage
-│   ├── api.js          # Cliente HTTP para o backend FastAPI
-│   └── app.js          # Lógica da aplicação (navegação, forms, render)
+│   ├── storage.js      # localStorage CRUD
+│   ├── api.js          # HTTP client for the FastAPI backend
+│   └── app.js          # Application logic (navigation, forms, rendering)
 └── .gitignore
 ```
 
 ---
 
-## Como rodar
+## How to Run
 
-### Opção 1 — Abrir direto no browser
-```bash
-# Basta abrir o arquivo:
+### Option 1 — Open directly in the browser
+
+```bash id="z2qz4w"
+# Just open the file:
 open index.html
-# ou no Windows:
+# or on Windows:
 start index.html
 ```
 
-### Opção 2 — Servidor local (recomendado, evita problemas de CORS)
-```bash
+### Option 2 — Local server (recommended, avoids CORS issues)
+
+```bash id="sx4v6m"
 # Python
 python3 -m http.server 3000
 
 # Node (npx)
 npx serve .
 
-# VSCode → instale "Live Server" e clique em "Go Live"
+# VSCode → install "Live Server" and click "Go Live"
 ```
 
-Acesse: `http://localhost:3000`
+Access: `http://localhost:3000`
 
 ---
 
-## Conectar ao backend FastAPI
+## Connect to the FastAPI Backend
 
-1. Edite `config.js`:
-```js
+1. Edit `config.js`:
+
+```js id="x4c4au"
 window.FP_CONFIG = {
   apiUrl: 'http://localhost:8000/api/v1',
 };
 ```
 
-2. Em `js/app.js`, substitua as chamadas `Storage.*` por `API.clients.*`:
-```js
-// Antes (localStorage):
+2. In `js/app.js`, replace `Storage.*` calls with `API.clients.*`:
+
+```js id="v2cdye"
+// Before (localStorage):
 const clients = Storage.getAll();
 
-// Depois (backend):
+// After (backend):
 const clients = await API.clients.list();
 ```
 
-3. Para autenticação, use `API.auth.login(email, password)` e guarde os tokens — `api.js` já faz refresh automático.
+3. For authentication, use `API.auth.login(email, password)` and store the tokens — `api.js` already handles automatic token refresh.
 
 ---
 
 ## Features
 
-| Feature | Status |
-|---|---|
-| Dashboard com métricas agregadas | ✅ |
-| Lista de clientes (grid + list view) | ✅ |
-| Busca em tempo real | ✅ |
-| Formulário de criação de cliente | ✅ |
-| Edição de cliente | ✅ |
-| Exclusão com confirmação | ✅ |
-| Contas de aposentadoria dinâmicas (IRA, Roth IRA, 401k, Pension) | ✅ |
-| Contas não-aposentadoria (Brokerage, Joint) | ✅ |
-| Passivos com taxa de juros (Mortgage, Auto Loan) | ✅ |
-| Trust details com Zillow address | ✅ |
-| Vinculação de cônjuge | ✅ |
-| SSN com máscara automática | ✅ |
-| Cálculo de idade a partir do DOB | ✅ |
-| Persistência via localStorage | ✅ |
-| Cliente HTTP pronto para FastAPI | ✅ |
-| Toasts de feedback | ✅ |
-| Design responsivo | ✅ |
+| Feature                                                    | Status |
+| ---------------------------------------------------------- | ------ |
+| Dashboard with aggregated metrics                          | ✅      |
+| Client list (grid + list view)                             | ✅      |
+| Real-time search                                           | ✅      |
+| Client creation form                                       | ✅      |
+| Client editing                                             | ✅      |
+| Deletion with confirmation                                 | ✅      |
+| Dynamic retirement accounts (IRA, Roth IRA, 401k, Pension) | ✅      |
+| Non-retirement accounts (Brokerage, Joint)                 | ✅      |
+| Liabilities with interest rates (Mortgage, Auto Loan)      | ✅      |
+| Trust details with Zillow address                          | ✅      |
+| Spouse linking                                             | ✅      |
+| SSN with automatic masking                                 | ✅      |
+| Age calculation from DOB                                   | ✅      |
+| Persistence via localStorage                               | ✅      |
+| HTTP client ready for FastAPI                              | ✅      |
+| Feedback toasts                                            | ✅      |
+| Responsive design                                          | ✅      |
 
 ---
 
-## Produção (nginx exemplo)
+## Production (nginx example)
 
-```nginx
+```nginx id="jxxp4f"
 server {
   listen 80;
   root /var/www/financial-frontend;
   index index.html;
 
-  # Injeta config de ambiente
+  # Injects environment config
   location /config.js {
     add_header Content-Type application/javascript;
-    return 200 'window.FP_CONFIG = { apiUrl: "https://api.exemplo.com/api/v1" };';
+    return 200 'window.FP_CONFIG = { apiUrl: "https://api.example.com/api/v1" };';
   }
 
   location / {

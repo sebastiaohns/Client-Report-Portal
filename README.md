@@ -1,23 +1,23 @@
 # FinPlan — Monorepo
 
-Plataforma de gerenciamento de clientes para planejamento financeiro.
+Client management platform for financial planning.
 
-```
+```text
 finplan/
 ├── backend/          FastAPI + Tortoise ORM + SQLite/PostgreSQL
-├── frontend/         Vanilla HTML/CSS/JS servido por nginx
-├── docker-compose.yml          Produção
+├── frontend/         Vanilla HTML/CSS/JS served by nginx
+├── docker-compose.yml          Production
 ├── docker-compose.dev.yml      Dev overrides (hot reload)
-├── Makefile                    Atalhos de desenvolvimento
+├── Makefile                    Development shortcuts
 ├── .env.example
-└── .env                        (não commitado)
+└── .env                        (not committed)
 ```
 
 ---
 
-## Arquitetura
+## Architecture
 
-```
+```text
                         ┌─────────────────────────────┐
                         │       finplan_net (bridge)   │
                         │                             │
@@ -27,125 +27,133 @@ browser ──► :80 ──►  [ frontend / nginx ]             │
                         └─────────────────────────────┘
 ```
 
-- O **nginx** é a única porta exposta ao host (`80`)
-- Requisições `/api/*` são repassadas internamente ao **backend** na porta `8000`
-- O **backend** nunca é acessível diretamente em produção
-- O `config.js` é gerado em tempo de execução pelo entrypoint do container frontend
+* **nginx** is the only port exposed to the host (`80`)
+* `/api/*` requests are internally proxied to the **backend** on port `8000`
+* The **backend** is never directly accessible in production
+* `config.js` is generated at runtime by the frontend container entrypoint
 
 ---
 
 ## Quickstart
 
-### Pré-requisitos
-- Docker >= 24
-- Docker Compose >= 2.20
-- `make` (opcional, mas recomendado)
+### Prerequisites
 
-### 1. Configurar ambiente
+* Docker >= 24
+* Docker Compose >= 2.20
+* `make` (optional, but recommended)
+
+### 1. Configure environment
 
 ```bash
 git clone <repo> && cd finplan
 cp .env.example .env
 ```
 
-Edite `.env` e preencha obrigatoriamente:
+Edit `.env` and fill in the required values:
+
 ```bash
 SECRET_KEY="$(openssl rand -hex 32)"
 ENCRYPTION_KEY="$(python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())")"
 ```
 
-### 2. Subir em desenvolvimento
+### 2. Start in development mode
 
 ```bash
 make dev
-# ou
+# or
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 ```
 
-| Serviço   | URL                        |
-|-----------|----------------------------|
-| Frontend  | http://localhost           |
-| Backend   | http://localhost/api/v1    |
-| API Docs  | http://localhost:8000/docs (somente dev) |
+| Service  | URL                                                                 |
+| -------- | ------------------------------------------------------------------- |
+| Frontend | [http://localhost](http://localhost)                                |
+| Backend  | [http://localhost/api/v1](http://localhost/api/v1)                  |
+| API Docs | [http://localhost:8000/docs](http://localhost:8000/docs) (dev only) |
 
-### 3. Inicializar banco e criar admin
-
-```bash
-make migrate       # roda aerich upgrade
-make superuser     # wizard de criação de admin
-```
-
-### 4. Produção
+### 3. Initialize database and create admin user
 
 ```bash
-make build         # builda as imagens
-make up            # sobe em background
-make logs          # acompanha os logs
+make migrate       # runs aerich upgrade
+make superuser     # admin creation wizard
+```
+
+### 4. Production
+
+```bash
+make build         # builds the images
+make up            # starts in background
+make logs          # follows logs
 ```
 
 ---
 
-## Comandos úteis (Makefile)
+## Useful Commands (Makefile)
 
-| Comando | Descrição |
-|---|---|
-| `make dev` | Sobe com hot reload |
-| `make up` | Sobe em background (prod) |
-| `make down` | Para os containers |
-| `make build` | Rebuilda imagens |
-| `make logs` | Logs de todos os serviços |
-| `make migrate` | Aplica migrations (aerich upgrade) |
-| `make migration NAME=descricao` | Cria nova migration |
-| `make superuser` | Cria usuário admin |
-| `make test` | Roda testes |
-| `make lint` | Roda ruff |
-| `make clean` | Remove containers + volumes |
-
----
-
-## Variáveis de ambiente
-
-Todas definidas em `.env` na raiz do monorepo.
-
-| Variável | Padrão | Descrição |
-|---|---|---|
-| `SECRET_KEY` | — | Chave JWT (obrigatória, min 32 chars) |
-| `ENCRYPTION_KEY` | — | Fernet key para SSN (obrigatória em prod) |
-| `DATABASE_URL` | sqlite:///app/data/financial.db | Connection string |
-| `API_URL` | /api/v1 | URL da API injetada no config.js |
-| `APP_ENV` | development | development / staging / production |
-| `WORKERS` | 1 | Workers uvicorn |
-| `LOG_LEVEL` | INFO | DEBUG / INFO / WARNING / ERROR |
+| Command                           | Description                         |
+| --------------------------------- | ----------------------------------- |
+| `make dev`                        | Starts with hot reload              |
+| `make up`                         | Starts in background (prod)         |
+| `make down`                       | Stops containers                    |
+| `make build`                      | Rebuilds images                     |
+| `make logs`                       | Logs from all services              |
+| `make migrate`                    | Applies migrations (aerich upgrade) |
+| `make migration NAME=description` | Creates a new migration             |
+| `make superuser`                  | Creates admin user                  |
+| `make test`                       | Runs tests                          |
+| `make lint`                       | Runs ruff                           |
+| `make clean`                      | Removes containers + volumes        |
 
 ---
 
-## Migrar para PostgreSQL
+## Environment Variables
 
-1. Descomente o serviço `db` em `docker-compose.yml`
-2. Ajuste `.env`:
+All defined in the root `.env` file.
+
+| Variable         | Default                         | Description                                      |
+| ---------------- | ------------------------------- | ------------------------------------------------ |
+| `SECRET_KEY`     | —                               | JWT key (required, min 32 chars)                 |
+| `ENCRYPTION_KEY` | —                               | Fernet key for SSN encryption (required in prod) |
+| `DATABASE_URL`   | sqlite:///app/data/financial.db | Connection string                                |
+| `API_URL`        | /api/v1                         | API URL injected into config.js                  |
+| `APP_ENV`        | development                     | development / staging / production               |
+| `WORKERS`        | 1                               | Uvicorn workers                                  |
+| `LOG_LEVEL`      | INFO                            | DEBUG / INFO / WARNING / ERROR                   |
+
+---
+
+## Migrating to PostgreSQL
+
+1. Uncomment the `db` service in `docker-compose.yml`
+2. Update `.env`:
+
 ```env
 DATABASE_URL=postgres://finplan:finplan_pass@db:5432/finplan_db
 ```
-3. `make down && make up`
+
+3. Run:
+
+```bash
+make down && make up
+```
 
 ---
 
-## Estrutura detalhada
+## Detailed Structure
 
-```
+```text
 finplan/
 ├── backend/
 │   ├── app/
 │   │   ├── api/v1/endpoints/   auth.py, clients.py
 │   │   ├── core/               config, database, security, logging, deps, exceptions
-│   │   ├── middleware/          logging_middleware
-│   │   ├── models/              client.py, user.py
-│   │   ├── repositories/        client_repository.py
-│   │   ├── schemas/             auth.py, client.py
-│   │   ├── services/            auth_service.py, client_service.py
+│   │   ├── middleware/         logging_middleware
+│   │   ├── models/             client.py, user.py
+│   │   ├── repositories/       client_repository.py
+│   │   ├── schemas/            auth.py, client.py
+│   │   ├── services/           auth_service.py, client_service.py
 │   │   └── main.py
 │   ├── migrations/
-│   ├── scripts/                 create_superuser.py
+│   ├── scripts/                create_superuser.py
 │   ├── tests/
 │   ├── Dockerfile
 │   ├── .dockerignore
@@ -155,13 +163,13 @@ finplan/
 ├── frontend/
 │   ├── css/main.css
 │   ├── js/
-│   │   ├── storage.js          CRUD localStorage
-│   │   ├── api.js              HTTP client para o backend
-│   │   └── app.js              Lógica da SPA
+│   │   ├── storage.js          localStorage CRUD
+│   │   ├── api.js              HTTP client for the backend
+│   │   └── app.js              SPA logic
 │   ├── index.html
-│   ├── config.js               Gerado em runtime pelo entrypoint
+│   ├── config.js               Generated at runtime by the entrypoint
 │   ├── nginx.conf
-│   ├── docker-entrypoint.sh    Injeta API_URL no config.js
+│   ├── docker-entrypoint.sh    Injects API_URL into config.js
 │   ├── Dockerfile
 │   └── .dockerignore
 │

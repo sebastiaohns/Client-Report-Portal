@@ -44,7 +44,7 @@ services:
       APP_NAME:    ${APP_NAME:-FinPlan}
       APP_VERSION: ${APP_VERSION:-1.0.0}
     ports:
-      - "80:80"                         # Única porta exposta ao host
+      - "80:80"                         # Only port exposed to the host
     depends_on:
       backend:
         condition: service_healthy
@@ -57,9 +57,9 @@ services:
       retries: 3
 
   # ════════════════════════════════════════════
-  #  DATABASE — PostgreSQL (opcional)
-  #  Descomente para usar PostgreSQL em vez de SQLite.
-  #  Ajuste DATABASE_URL no .env para:
+  #  DATABASE — PostgreSQL (optional)
+  #  Uncomment to use PostgreSQL instead of SQLite.
+  #  Update DATABASE_URL in .env to:
   #    postgres://finplan:finplan_pass@db:5432/finplan_db
   # ════════════════════════════════════════════
   # db:
@@ -88,4 +88,4 @@ networks:
 
 volumes:
   backend_data:
-  # postgres_data:   # descomente junto com o serviço db
+  # postgres_data:   # uncomment together with the db service

@@ -7,67 +7,67 @@
         backend-shell frontend-shell \
         clean prune
 
-# Cores
+# Colors
 CYAN  := \033[0;36m
 RESET := \033[0m
 
-help: ## Mostra esta ajuda
+help: ## Displays this help message
 	@echo ""
-	@echo "  $(CYAN)FinPlan — Comandos disponíveis$(RESET)"
+	@echo "  $(CYAN)FinPlan — Available commands$(RESET)"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) \
 		| awk 'BEGIN {FS = ":.*?## "}; {printf "  $(CYAN)%-20s$(RESET) %s\n", $$1, $$2}'
 	@echo ""
 
 # ── Docker ──────────────────────────────────────────────────
-up: ## Sobe todos os serviços em background (produção)
+up: ## Starts all services in background mode (production)
 	docker compose up -d
 
-down: ## Para e remove containers
+down: ## Stops and removes containers
 	docker compose down
 
-dev: ## Sobe em modo desenvolvimento (hot reload)
+dev: ## Starts in development mode (hot reload)
 	docker compose -f docker-compose.yml -f docker-compose.dev.yml up
 
-build: ## Rebuilda todas as imagens
+build: ## Rebuilds all images
 	docker compose build --no-cache
 
-logs: ## Segue logs de todos os serviços
+logs: ## Follows logs from all services
 	docker compose logs -f
 
-logs-backend: ## Logs apenas do backend
+logs-backend: ## Backend logs only
 	docker compose logs -f backend
 
-logs-frontend: ## Logs apenas do frontend
+logs-frontend: ## Frontend logs only
 	docker compose logs -f frontend
 
 # ── Backend ──────────────────────────────────────────────────
-migrate: ## Roda aerich upgrade (migrations)
+migrate: ## Runs aerich upgrade (migrations)
 	docker compose exec backend aerich upgrade
 
-migration: ## Cria nova migration (uso: make migration NAME=add_field)
+migration: ## Creates a new migration (usage: make migration NAME=add_field)
 	docker compose exec backend aerich migrate --name $(NAME)
 
-superuser: ## Cria superusuário admin
+superuser: ## Creates admin superuser
 	docker compose exec backend python scripts/create_superuser.py
 
-backend-shell: ## Shell Python dentro do container backend
+backend-shell: ## Python shell inside backend container
 	docker compose exec backend python
 
 # ── Frontend ─────────────────────────────────────────────────
-frontend-shell: ## Shell sh dentro do container frontend (nginx)
+frontend-shell: ## sh shell inside frontend container (nginx)
 	docker compose exec frontend sh
 
-# ── Qualidade ────────────────────────────────────────────────
-test: ## Roda testes do backend
+# ── Quality ──────────────────────────────────────────────────
+test: ## Runs backend tests
 	docker compose exec backend pytest tests/ -v
 
-lint: ## Roda ruff linter no backend
+lint: ## Runs ruff linter on backend
 	docker compose exec backend ruff check app/
 
-# ── Limpeza ──────────────────────────────────────────────────
-clean: ## Remove containers e volumes
+# ── Cleanup ──────────────────────────────────────────────────
+clean: ## Removes containers and volumes
 	docker compose down -v
 
-prune: ## Remove imagens não utilizadas (cuidado!)
+prune: ## Removes unused images (careful!)
 	docker image prune -f
