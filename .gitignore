@@ -1,0 +1,43 @@
+# ── Secrets ─────────────────────────────────
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# ── Python ───────────────────────────────────
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ── Database ─────────────────────────────────
+backend/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Logs ─────────────────────────────────────
+logs/
+*.log
+
+# ── Tests / coverage ─────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Tooling ──────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+
+# ── Docker overrides ─────────────────────────
+docker-compose.override.yml
+
+# ── Migrations (manter estrutura, ignorar versões geradas) ──
+backend/migrations/versions/
