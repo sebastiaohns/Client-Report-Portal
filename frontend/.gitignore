@@ -1,0 +1,19 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Build outputs (se vier a usar Vite/Webpack no futuro)
+dist/
+build/
+.cache/
+
+# Env local overrides
+config.local.js
+
+# Logs
+*.log

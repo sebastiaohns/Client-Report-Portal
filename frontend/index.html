@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FinPlan — Client Management</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css" />
+</head>
+<body>
+
+  <!-- ── SIDEBAR ──────────────────────────────────────────────────── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <span class="brand-mark">FP</span>
+      <span class="brand-name">FinPlan</span>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="#" class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </a>
+      <a href="#" class="nav-item" data-view="clients">
+        <svg viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+        Clients
+      </a>
+      <a href="#" class="nav-item" data-view="reports">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10,9 9,9 8,9"/></svg>
+        Reports
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-avatar">A</div>
+      <div class="user-info">
+        <span class="user-name">Advisor</span>
+        <span class="user-role">Financial Planner</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── MAIN ─────────────────────────────────────────────────────── -->
+  <main class="main" id="main">
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <header class="page-header">
+        <div>
+          <p class="page-eyebrow">Overview</p>
+          <h1 class="page-title">Dashboard</h1>
+        </div>
+        <button class="btn btn-primary" onclick="App.showView('clients'); App.openForm()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Client
+        </button>
+      </header>
+
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <span class="stat-label">Total Clients</span>
+          <span class="stat-value" id="stat-total">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Avg. Monthly Income</span>
+          <span class="stat-value" id="stat-income">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Total AUM (Retirement)</span>
+          <span class="stat-value" id="stat-aum">—</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Clients w/ Trusts</span>
+          <span class="stat-value" id="stat-trusts">—</span>
+        </div>
+      </div>
+
+      <section class="section">
+        <h2 class="section-title">Recent Clients</h2>
+        <div class="table-wrap">
+          <table class="table" id="dashboard-table">
+            <thead>
+              <tr>
+                <th>Name</th><th>Age</th><th>Monthly Income</th><th>Retirement AUM</th><th>Last Report</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-tbody">
+              <tr><td colspan="5" class="empty-row">No clients yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <!-- CLIENTS VIEW -->
+    <div class="view" id="view-clients">
+      <header class="page-header">
+        <div>
+          <p class="page-eyebrow">People</p>
+          <h1 class="page-title">Clients</h1>
+        </div>
+        <button class="btn btn-primary" onclick="App.openForm()">
+          <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Client
+        </button>
+      </header>
+
+      <div class="toolbar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" id="search-input" placeholder="Search clients…" oninput="App.filterClients(this.value)" />
+        </div>
+        <div class="view-toggle">
+          <button class="toggle-btn active" id="btn-grid" onclick="App.setLayout('grid')">
+            <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          </button>
+          <button class="toggle-btn" id="btn-list" onclick="App.setLayout('list')">
+            <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="clients-container" class="clients-grid"></div>
+    </div>
+
+    <!-- REPORTS VIEW -->
+    <div class="view" id="view-reports">
+      <header class="page-header">
+        <div>
+          <p class="page-eyebrow">Analytics</p>
+          <h1 class="page-title">Reports</h1>
+        </div>
+      </header>
+      <div id="reports-container"></div>
+    </div>
+
+  </main>
+
+  <!-- ── DRAWER: CLIENT FORM ───────────────────────────────────────── -->
+  <div class="drawer-overlay" id="drawer-overlay" onclick="App.closeForm()"></div>
+  <aside class="drawer" id="drawer">
+    <div class="drawer-header">
+      <h2 class="drawer-title" id="drawer-title">New Client</h2>
+      <button class="drawer-close" onclick="App.closeForm()">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="drawer-body">
+      <form id="client-form" novalidate>
+        <input type="hidden" id="field-id" />
+
+        <!-- ── PERSONAL INFO ── -->
+        <fieldset class="form-section">
+          <legend class="form-section-title">
+            <span class="section-num">01</span> Personal Information
+          </legend>
+
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="field-name">Full Name <span class="req">*</span></label>
+              <input type="text" id="field-name" placeholder="e.g. John Doe" required />
+            </div>
+          </div>
+          <div class="form-row two">
+            <div class="form-group">
+              <label for="field-dob">Date of Birth <span class="req">*</span></label>
+              <input type="date" id="field-dob" required />
+              <span class="field-hint" id="age-display"></span>
+            </div>
+            <div class="form-group">
+              <label for="field-ssn">SSN <span class="req">*</span></label>
+              <input type="text" id="field-ssn" placeholder="XXX-XX-XXXX" maxlength="11" />
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group full">
+              <label for="field-spouse">Spouse (Client ID)</label>
+              <select id="field-spouse">
+                <option value="">— No spouse linked —</option>
+              </select>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- ── FINANCIALS ── -->
+        <fieldset class="form-section">
+          <legend class="form-section-title">
+            <span class="section-num">02</span> Monthly Financials
+          </legend>
+          <div class="form-row three">
+            <div class="form-group">
+              <label for="field-salary">Monthly Salary <span class="req">*</span></label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="field-salary" min="0" step="0.01" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="field-expenses">Expense Budget <span class="req">*</span></label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="field-expenses" min="0" step="0.01" placeholder="0.00" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="field-reserve">Reserve Target <span class="req">*</span></label>
+              <div class="input-prefix">
+                <span>$</span>
+                <input type="number" id="field-reserve" min="0" step="0.01" placeholder="0.00" />
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- ── RETIREMENT ACCOUNTS ── -->
+        <fieldset class="form-section">
+          <legend class="form-section-title">
+            <span class="section-num">03</span> Retirement Accounts
+            <button type="button" class="btn-add-inline" onclick="App.addRetirementRow()">+ Add</button>
+          </legend>
+          <div id="retirement-list" class="account-list"></div>
+        </fieldset>
+
+        <!-- ── NON-RETIREMENT ACCOUNTS ── -->
+        <fieldset class="form-section">
+          <legend class="form-section-title">
+            <span class="section-num">04</span> Non-Retirement Accounts
+            <button type="button" class="btn-add-inline" onclick="App.addNonRetirementRow()">+ Add</button>
+          </legend>
+          <div id="non-retirement-list" class="account-list"></div>
+        </fieldset>
+
+        <!-- ── LIABILITIES ── -->
+        <fieldset class="form-section">
+          <legend class="form-section-title">
+            <span class="section-num">05</span> Liabilities
+            <button type="button" class="btn-add-inline" onclick="App.addLiabilityRow()">+ Add</button>
+          </legend>
+          <div id="liability-list" class="account-list"></div>
+        </fieldset>
+
+        <!-- ── TRUST ── -->
+        <fieldset class="form-section">
+          <legend class="form-section-title">
+            <span class="section-num">06</span> Trust Details
+            <label class="toggle-switch">
+              <input type="checkbox" id="trust-toggle" onchange="App.toggleTrust(this.checked)" />
+              <span class="toggle-track"></span>
+            </label>
+          </legend>
+          <div id="trust-fields" class="trust-fields hidden">
+            <div class="form-row two">
+              <div class="form-group">
+                <label for="field-trust-name">Trust Name</label>
+                <input type="text" id="field-trust-name" placeholder="Smith Family Trust" />
+              </div>
+              <div class="form-group">
+                <label for="field-trustee">Trustee</label>
+                <input type="text" id="field-trustee" placeholder="Trustee name" />
+              </div>
+            </div>
+            <div class="form-row two">
+              <div class="form-group">
+                <label for="field-trust-address">Property Address</label>
+                <input type="text" id="field-trust-address" placeholder="123 Main St, Austin TX 78701" />
+              </div>
+              <div class="form-group">
+                <label for="field-trust-value">Estimated Value</label>
+                <div class="input-prefix">
+                  <span>$</span>
+                  <input type="number" id="field-trust-value" min="0" step="0.01" placeholder="0.00" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+
+      </form>
+    </div>
+
+    <div class="drawer-footer">
+      <button class="btn btn-ghost" onclick="App.closeForm()">Cancel</button>
+      <button class="btn btn-danger hidden" id="btn-delete" onclick="App.deleteClient()">Delete</button>
+      <button class="btn btn-primary" onclick="App.saveClient()">Save Client</button>
+    </div>
+  </aside>
+
+  <!-- ── TOAST ─────────────────────────────────────────────────────── -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- ── REPORT MODAL ──────────────────────────────────────────── -->
+  <div class="report-modal-overlay hidden" id="report-modal-overlay"></div>
+
+  <!-- ── CONFIRM DIALOG ────────────────────────────────────────────── -->
+  <div class="modal-overlay hidden" id="confirm-overlay">
+    <div class="modal">
+      <h3 class="modal-title">Delete Client</h3>
+      <p class="modal-body" id="confirm-body">Are you sure you want to delete this client? This action cannot be undone.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="App.cancelDelete()">Cancel</button>
+        <button class="btn btn-danger" onclick="App.confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="config.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/report.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
