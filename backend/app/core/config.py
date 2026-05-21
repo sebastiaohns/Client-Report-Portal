@@ -72,4 +72,10 @@ def get_settings() -> Settings:
     return Settings()
 
 
+@field_validator("DATABASE_URL")
+@classmethod
+def fix_postgres_url(cls, v: str) -> str:
+    return v.replace("postgresql://", "postgres://", 1)
+
+
 settings = get_settings()
